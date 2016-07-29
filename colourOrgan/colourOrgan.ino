@@ -35,24 +35,25 @@ void loop() {
   for(int i = 0; i < 7; i++){
     //Change frequency band
     digitalWrite(strobePin, LOW);
-    delayMicroseconds(100);
+    delayMicroseconds(150);
     //Store the "volume" of the frequency
-    frequencyVolume[i] = analogRead(analogPin) * 0.6;
+    frequencyVolume[i] = analogRead(analogPin);
+    int averageVolume;
     
+    //TODO: Implement averages
     switch(i){
-       case 0:
        case 1:
-       case 2:
-         //Light the "low frequency" LED to the "frequencyVolume" 
-         analogWrite(lowPin, frequencyVolume[i]);
+         //Light the "low frequency" LED to the "frequencyVolume"
+         averageVolume = (frequencyVolume[0]);
+         analogWrite(lowPin, averageVolume);
          break;
-       case 3:
        case 4:
-         analogWrite(midPin, frequencyVolume[i]);
+         averageVolume = (frequencyVolume[1] + frequencyVolume[2] + frequencyVolume[3]) / 3;
+         analogWrite(midPin, averageVolume);
          break;
-       case 5:
        case 6:
-         analogWrite(highPin, frequencyVolume[i]);
+         averageVolume = (frequencyVolume[4] + frequencyVolume[5]) / 2;
+         analogWrite(highPin, averageVolume);
          break;
     }
     
