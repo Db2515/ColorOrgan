@@ -18,6 +18,8 @@ void loop() {
      
      analogWrite(11, i);
      delay(500);
+     //analogWrite(9, 0);
+     //analogWrite(10, 0);
      analogWrite(11, 0);
   } 
 
