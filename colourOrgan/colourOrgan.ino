@@ -6,12 +6,14 @@ int lowPin = 9;
 int midPin = 10;
 int highPin = 11; 
 
+int lowFilter = 100;
+
 void setup() {
   //Open serial communication
   Serial.begin(9600);
   
   //Set the pin modes
-  pinMode(analogPin, INPUT);
+  pinMode(analogPin, INPUT_PULLUP);
   pinMode(strobePin, OUTPUT);
   pinMode(resetPin, 3);
   pinMode(lowPin, OUTPUT);
@@ -32,15 +34,24 @@ void loop() {
   
   int frequencyVolume[7];
   
+  //Strobe to Strobe delay
+  delayMicroseconds(72);
+  
+  int fallingEdgeTime = 0;
+  
   for(int i = 0; i < 7; i++){
     //Change frequency band
     digitalWrite(strobePin, LOW);
-    delayMicroseconds(150);
+    fallingEdgeTime = micros();
     //Store the "volume" of the frequency
-    frequencyVolume[i] = analogRead(analogPin);
+    frequencyVolume[i] = map(constrain(analogRead(analogPin), lowFilter, 1023),
+                              lowFilter, 1023, 0, 255);
     int averageVolume;
     
-    //TODO: Implement averages
+    //Print the value for dubugging
+    Serial.print(" ");
+    Serial.print(frequencyVolume[i]);
+    
     switch(i){
        case 1:
          //Light the "low frequency" LED to the "frequencyVolume"
@@ -48,7 +59,7 @@ void loop() {
          analogWrite(lowPin, averageVolume);
          break;
        case 4:
-         averageVolume = (frequencyVolume[1] + frequencyVolume[2] + frequencyVolume[3]) / 3;
+         averageVolume = (frequencyVolume[2] + frequencyVolume[3]) / 2;
          analogWrite(midPin, averageVolume);
          break;
        case 6:
@@ -57,11 +68,10 @@ void loop() {
          break;
     }
     
-    //Print the value for dubugging
-    Serial.print(" ");
-    Serial.print(frequencyVolume[i]);
+   
     
     //Move to the next band of frequencies
+    delayMicroseconds(40);
     digitalWrite(strobePin, HIGH);
       
   }
