@@ -2,20 +2,22 @@
 int analogPin = 0;
 int strobePin = 2;
 int resetPin = 3;
+int bassPin = 5;
 int lowPin = 9;
 int midPin = 10;
 int highPin = 11; 
 
-int lowFilter = 100;
+int lowFilter = 63;
 
 void setup() {
   //Open serial communication
   Serial.begin(9600);
   
   //Set the pin modes
-  pinMode(analogPin, INPUT_PULLUP);
+  pinMode(analogPin, INPUT);
   pinMode(strobePin, OUTPUT);
   pinMode(resetPin, 3);
+  pinMode(bassPin, OUTPUT);
   pinMode(lowPin, OUTPUT);
   pinMode(midPin, OUTPUT);
   pinMode(highPin, OUTPUT);
@@ -53,17 +55,20 @@ void loop() {
     Serial.print(frequencyVolume[i]);
     
     switch(i){
-       case 1:
+       case 0:
+         averageVolume = frequencyVolume[0];
+         analogWrite(bassPin, averageVolume);
+       case 2:
          //Light the "low frequency" LED to the "frequencyVolume"
-         averageVolume = (frequencyVolume[0]);
+         averageVolume = (frequencyVolume[1] + frequencyVolume[2]) /2;
          analogWrite(lowPin, averageVolume);
          break;
        case 4:
-         averageVolume = (frequencyVolume[2] + frequencyVolume[3]) / 2;
+         averageVolume = (frequencyVolume[3] + frequencyVolume[4]) / 2;
          analogWrite(midPin, averageVolume);
          break;
        case 6:
-         averageVolume = (frequencyVolume[4] + frequencyVolume[5]) / 2;
+         averageVolume = (frequencyVolume[5] + frequencyVolume[6]) / 2;
          analogWrite(highPin, averageVolume);
          break;
     }
